@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zelda</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+
+        #imageContainer {
+            margin-bottom: 20px;
+        }
+
+        #frameImage {
+            width: 600px;
+            max-width: 100vw;
+            height: auto;
+        }
+
+        #timeSlider {
+            width: 80%;
+            max-width: 800px;
+        }
+
+        .slider-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        #currentTime {
+            font-size: 1.2em;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="imageContainer">
+        <img id="frameImage" src="frame_0001.png" alt="Time frame image">
+    </div>
+
+    <div class="slider-container">
+        <input type="range" id="timeSlider" min="1" max="72" value="1" step="1">
+        <div id="currentTime">Time: 00:00</div>
+    </div>
+
+    <script>
+        // Function to format the time
+        function formatTime(hour) {
+            let h = Math.floor(hour);
+            let m = Math.floor((hour - h) * 60);
+            return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
+        }
+
+        // Function to calculate the frame index based on time
+        function getFrameFromTime(hour) {
+            const totalFrames = 72;
+            const frameIndex = Math.round((hour / 24) * totalFrames);
+            return Math.max(1, Math.min(frameIndex, totalFrames)); // Ensure it's within 1 to 72
+        }
+
+        // Function to update the frame based on slider or current time
+        function updateFrame(time) {
+            const frameNumber = getFrameFromTime(time);
+            const frameImage = document.getElementById('frameImage');
+            frameImage.src = `frame_${String(frameNumber).padStart(4, '0')}.png`;
+
+            // Update the current time text
+            const currentTime = formatTime(time);
+            document.getElementById('currentTime').textContent = currentTime;
+        }
+
+        // Set up the slider functionality
+        const timeSlider = document.getElementById('timeSlider');
+        timeSlider.addEventListener('input', function() {
+            const time = (timeSlider.value - 1) * (24 / 71); // Scale slider value (1 to 72) to time (0 to 24)
+            updateFrame(time);
+        });
+
+        // Initialize with current time (you can change this to display the current time based on the real clock if needed)
+        const currentHour = new Date().getHours() + new Date().getMinutes() / 60;
+        const initialFrame = getFrameFromTime(currentHour);
+        timeSlider.value = initialFrame;
+        updateFrame(currentHour); // Show the correct frame for the initial time
+
+    </script>
+
+</body>
+</html>
